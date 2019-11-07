@@ -17,6 +17,7 @@
 	  <legend>${tablename }表的结构</legend>
 	</fieldset>
 	<div class="layui-form">
+		　
 		<a href="javascript:history.go(-1);"><input type="button" class="layui-btn" lay-submit="" lay-filter="demo1" value="返回"/></a>
 	  <table class="layui-table">
 	    <!-- <colgroup>
