@@ -17,6 +17,7 @@
 	  <legend>${tablename }表的数据(${fn:length(tableData.data)}条数据)</legend>
 	</fieldset>
 	<div class="layui-form">
+		　
 		<a href="javascript:history.go(-1);"><input type="button" class="layui-btn" lay-submit="" lay-filter="demo1" value="返回"/></a>
 		<a href="${pageContext.request.contextPath }/exporttabledata.db?tablename=${tablename }"><input type="button" class="layui-btn" lay-submit="" lay-filter="demo1" value="导出Excel"/></a>
 	  <table class="layui-table">
