@@ -1,4 +1,4 @@
-package com.thtf;
+package com.laoniu;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thtf.utils.DbInfo;
-import com.thtf.utils.ExcelExport;
-import com.thtf.utils.TestConnectUtil;
+import com.laoniu.utils.DbInfo;
+import com.laoniu.utils.ExcelExport;
+import com.laoniu.utils.TestConnectUtil;
 
 public class TestDb extends HttpServlet{
 

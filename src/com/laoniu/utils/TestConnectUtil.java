@@ -1,4 +1,4 @@
-package com.thtf.utils;
+package com.laoniu.utils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
