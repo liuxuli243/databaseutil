@@ -6,7 +6,7 @@
   </welcome-file-list>
   <servlet>
   	<servlet-name>testdb</servlet-name>
-  	<servlet-class>com.thtf.TestDb</servlet-class>
+  	<servlet-class>com.laoniu.TestDb</servlet-class>
   </servlet>
   <servlet-mapping>
   	<servlet-name>testdb</servlet-name>
