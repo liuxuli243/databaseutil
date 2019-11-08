@@ -1,7 +1,7 @@
 /**
  * ExportExcel.java
  * com.linyun.airline.admin.customneeds.util
- * Copyright (c) 2018, 北京同方股份有限公司版权所有.
+ * Copyright (c)老牛版权所有  2019-2050, 
 */
 
 package com.thtf.utils;

@@ -214,6 +214,7 @@ public class TestConnectUtil {
 	 * @param conn
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public static List<Map> listAllTables(Connection conn,DbInfo info){
 		List<Map> result = new ArrayList<Map>();
 		ResultSet rs = null;
@@ -221,7 +222,6 @@ public class TestConnectUtil {
 			conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			DatabaseMetaData meta = conn.getMetaData();
 			rs = meta.getTables(null, info.getUsername().toUpperCase(), null, new String[]{"TABLE","VIEW"});
-			ResultSetMetaData metaData = rs.getMetaData();
 			while (rs.next()) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("table_name", rs.getString("TABLE_NAME"));

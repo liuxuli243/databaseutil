@@ -258,6 +258,7 @@ public class TestDb extends HttpServlet{
 	 * @param request
 	 * @param response
 	 */
+	@SuppressWarnings("unchecked")
 	public void exporttabledata(HttpServletRequest request,HttpServletResponse response) {
 		String tablename = request.getParameter("tablename");
 		logger.info("导出表"+tablename+"的数据到Excel中");
@@ -277,6 +278,7 @@ public class TestDb extends HttpServlet{
 	 * @param request
 	 * @param response
 	 */
+	@SuppressWarnings("unchecked")
 	public void exportsqldata(HttpServletRequest request,HttpServletResponse response) {
 		String sql = request.getParameter("sql");
 		logger.info("导出SQL语句："+sql+"的查询结果到Excel中");
