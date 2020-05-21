@@ -17,7 +17,6 @@
 	  <legend>${tablename }表的结构</legend>
 	</fieldset>
 	<div class="layui-form">
-		　
 		<a href="javascript:history.go(-1);"><input type="button" class="layui-btn" lay-submit="" lay-filter="demo1" value="返回"/></a>
 	  <table class="layui-table">
 	    <!-- <colgroup>
@@ -32,17 +31,19 @@
 		        <th>类型</th>
 		        <th>长度</th>
 		        <th>可以为空</th>
+		        <th>主键</th>
 		        <th>注释</th>
 	      </tr> 
 	    </thead>
 	    <tbody>
 	    	<c:forEach items="${tableFileds }" var="row">
 	    		<tr>
-		       		<td>${row.COLUMN_NAME }</td>
-		       		<td>${row.TYPE_NAME }</td>
-		       		<td>${row.COLUMN_SIZE }</td>
-		       		<td>${row.NULLABLE eq 1?'是':'否'}</td>
-		       		<td>${row.REMARKS }</td>
+		       		<td width="20%">${row.COLUMN_NAME }</td>
+		       		<td width="20%">${row.TYPE_NAME }</td>
+		       		<td width="15%">${row.COLUMN_SIZE }</td>
+		       		<td width="10%">${row.NULLABLE eq 1?'是':'否'}</td>
+		       		<td width="10%">${row.PRIMARYKEY}</td>
+		       		<td width="25%">${row.REMARKS }</td>
 			    </tr>
 	    	</c:forEach>
 	    </tbody>

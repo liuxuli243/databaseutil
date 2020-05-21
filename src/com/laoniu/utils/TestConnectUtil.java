@@ -53,7 +53,7 @@ public class TestConnectUtil {
 			url += ip.trim();
 			url += "/" + dbname;
 		}
-		if ("informix".contentEquals(dbtype)) {
+		if ("informix".equals(dbtype)) {
 			url += "jdbc:informix-sqli://";
 			url += ip.trim();
 			url += ":"+ port.trim();
@@ -185,7 +185,7 @@ public class TestConnectUtil {
 		if ("postgresql".equals(dbtype)) {
 			dbstr = "org.postgresql.Driver";
 		}
-		if ("informix".contentEquals(dbtype)) {
+		if ("informix".equals(dbtype)) {
 			dbstr = "com.informix.jdbc.IfxDriver";
 		}
 		/*
@@ -210,18 +210,45 @@ public class TestConnectUtil {
 		}
 	}
 	/**
+	 * 关闭结果集
+	*Title: closeResultSet
+	*Description: 
+	　 * @param rs
+	 */
+	public static void closeResultSet(ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void closeStatement(Statement statement) {
+		if (statement != null) {
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	/**
 	 * 查询所有的表
 	 * @param conn
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static List<Map> listAllTables(Connection conn,DbInfo info){
 		List<Map> result = new ArrayList<Map>();
 		ResultSet rs = null;
 		try {
-			conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			DatabaseMetaData meta = conn.getMetaData();
 			rs = meta.getTables(null, info.getUsername().toUpperCase(), null, new String[]{"TABLE","VIEW"});
+			ResultSetMetaData metaData = rs.getMetaData();
 			while (rs.next()) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("table_name", rs.getString("TABLE_NAME"));
@@ -229,6 +256,8 @@ public class TestConnectUtil {
 				map.put("table_type", rs.getString("TABLE_TYPE"));
 				result.add(map);
 			}
+			closeResultSet(rs);
+			closeStatement(statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -244,17 +273,13 @@ public class TestConnectUtil {
 	public static List<String> listAllFiled(Connection conn,String tablename){
 		List<String> result = new ArrayList<String>();
 		try {
-			Statement statement = conn.createStatement();
-			ResultSet queryResult = statement.executeQuery("select * from "+tablename);
-			ResultSetMetaData metaData = queryResult.getMetaData();
-			for (int i = 1; i <= metaData.getColumnCount(); i++) {
-				result.add(metaData.getColumnName(i));
+			DatabaseMetaData metaData = conn.getMetaData();
+			ResultSet resultset = metaData.getColumns(null, conn.getSchema(), tablename, null);
+			while (resultset.next()) {
+				result.add(resultset.getString("COLUMN_NAME"));
+				
 			}
-			/*DatabaseMetaData metaData = conn.getMetaData();
-			ResultSet rs = metaData.getColumns(null, "%", tablename, "%");
-			while (rs.next()) {
-				result.add(rs.getString("COLUMN_NAME"));
-			}*/
+			closeResultSet(resultset);
 		} catch (Exception e) {
 		}
 		return result;
@@ -281,7 +306,36 @@ public class TestConnectUtil {
 				data.add(row);
 			}
 			result.put("data", data);
+			result.put("total", data.size());
+			closeResultSet(queryResult);
+			closeStatement(statement);
 		} catch (Exception e) {
+		}
+		return result;
+	}
+	/**
+	 * 获取表的数据量
+	 * @param conn
+	 * @param tablename
+	 * @return
+	 */
+	public static int getTableDataCount(Connection conn,String tablename){
+		int result = 0;
+		try {
+			
+			Statement statement = conn.createStatement();
+			String countsql = "select count(1) count from "+tablename;
+			
+			ResultSet queryResult = statement.executeQuery(countsql);
+			ResultSetMetaData metaData = queryResult.getMetaData();
+			String columnName = metaData.getColumnName(1);
+			while (queryResult.next()) {
+				result = queryResult.getInt(columnName);
+			}
+			closeResultSet(queryResult);
+			closeStatement(statement);
+		} catch (Exception e) {
+			
 		}
 		return result;
 	}
@@ -293,6 +347,7 @@ public class TestConnectUtil {
 	 */
 	public static Map<String, Object> querySql(Connection conn,String sql){
 		Map<String, Object> result = new HashMap<String, Object>();
+		System.out.println("查询的sql语句："+sql);
 		try {
 			List<String> allFiled = new ArrayList<String>();
 			Statement statement = conn.createStatement();
@@ -302,15 +357,24 @@ public class TestConnectUtil {
 				allFiled.add(metaData.getColumnName(i));
 			}
 			result.put("fileds", allFiled);
-			List<List<String>> data = new ArrayList<List<String>>();
+			List<List<String>> listdata = new ArrayList<List<String>>();
+			List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
 			while (queryResult.next()) {
-				List<String> row = new ArrayList<String>();
+				//查询用
+				Map<String, Object> row = new HashMap<String, Object>();
+				//导出excel用
+				List<String> listrow = new ArrayList<String>();
 				for (String filed : allFiled) {
-					row.add(queryResult.getString(filed));
+					row.put(filed,queryResult.getString(filed));
+					listrow.add(queryResult.getString(filed));
 				}
 				data.add(row);
+				listdata.add(listrow);
 			}
 			result.put("data", data);
+			result.put("listdata", listdata);
+			closeResultSet(queryResult);
+			closeStatement(statement);
 		} catch (Exception e) {
 		}
 		return result;
@@ -327,6 +391,8 @@ public class TestConnectUtil {
 		try {
 			Statement statement = conn.createStatement();
 			execute = statement.execute(sql);
+			execute = true;
+			closeStatement(statement);
 		} catch (SQLException e) {
 		}
 		return execute;
@@ -351,9 +417,22 @@ public class TestConnectUtil {
 				Map<String, Object> filed = new HashMap<String, Object>();
 				for (String colum : colums) {
 					filed.put(colum, resultset.getString(colum));
+					filed.put("PRIMARYKEY", "");
 				}
 				fileds.add(filed);
 			}
+			//获取主键
+			ResultSet primaryKeys = metaData.getPrimaryKeys(null, conn.getSchema(), tablename);
+			
+			while (primaryKeys.next()) {
+				for (Map<String, Object> field : fileds) {
+					if (primaryKeys.getString("COLUMN_NAME").equals(field.get("COLUMN_NAME"))) {
+						field.put("PRIMARYKEY", "√");
+					}
+				}
+			}
+			closeResultSet(primaryKeys);
+			closeResultSet(resultset);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -364,7 +443,7 @@ public class TestConnectUtil {
 	public static void main(String[] args) {
 		Connection connection = getConnection("oracle", "10.10.129.222", "1521", "thtf", "thtf", "thtf");
 		//List<String> listAllFiled = listAllFiled(connection, "SYS_DICT");
-		tableFileds(connection, "SYS_DICT");
+		tableFileds(connection, "SEQURENCE4ALARMID");
 		close(connection);
 	}
 }

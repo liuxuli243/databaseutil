@@ -14,8 +14,9 @@
 <body>
 	<div class="layui-form-item layui-form-text">
 	    <label class="layui-form-label">增、删、改SQL语句：</label>
+	    <br/>
 	    <div class="layui-input-block">
-	      <textarea placeholder="请输入SQL语句" class="layui-textarea" id="sql" name="desc"></textarea>
+	      <textarea placeholder="请输入SQL语句" class="layui-textarea" id="sql" name="desc" rows="10"></textarea>
 	    </div>
 	  </div>
 	  <div class="layui-form-item">

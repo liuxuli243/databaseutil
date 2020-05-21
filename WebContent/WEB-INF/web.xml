@@ -4,6 +4,10 @@
   <welcome-file-list>
     <welcome-file>testdb.jsp</welcome-file>
   </welcome-file-list>
+  
+  <listener>
+  	<listener-class>com.laoniu.listener.LaoNiuListener</listener-class>
+  </listener>
   <servlet>
   	<servlet-name>testdb</servlet-name>
   	<servlet-class>com.laoniu.TestDb</servlet-class>

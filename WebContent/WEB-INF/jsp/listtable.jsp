@@ -13,7 +13,7 @@
 </head>
 <body>
 	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-  <legend>所有的表</legend>
+  <legend>所有的数据库表和视图</legend>
 </fieldset>
 	<div class="layui-form">
 	  <table class="layui-table">
@@ -28,16 +28,16 @@
 	        <th>表名</th>
 	        <th>类型</th>
 	        <th>备注</th>
-	        <th>操作</th>
+	        <th align="center">操作</th>
 	      </tr> 
 	    </thead>
 	    <tbody>
 	    	<c:forEach items="${alltable }" var="table">
 	    		<tr>
-			       <td>${table.table_name }</td>
-			       <td>${table.table_type }</td>
-			       <td>${table.remark }</td>
-			       <td>
+			       <td width="40%">${table.table_name }</td>
+			       <td width="10%" align="center">${table.table_type eq 'TABLE'?'数据库表':'视图' }</td>
+			       <td width="35%">${table.remark }</td>
+			       <td align="center">
 			       		<a href="${pageContext.request.contextPath }/tablefileds.db?tablename=${table.table_name}">表结构</a>&nbsp;&nbsp;&nbsp;&nbsp;
 			       		<a href="${pageContext.request.contextPath }/tabledata.db?tablename=${table.table_name}">查看数据</a>
 			       </td>
