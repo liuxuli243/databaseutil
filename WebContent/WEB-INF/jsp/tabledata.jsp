@@ -13,37 +13,65 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath }/static/layui/dist/css/layui.css"  media="all">
 </head>
 <body>
+	<input id="tablecount" type="hidden">
 	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-	  <legend>${tablename }表的数据(${fn:length(tableData.data)}条数据)</legend>
+	  <legend id="datainfo">${tablename }表的数据</legend>
 	</fieldset>
 	<div class="layui-form">
-		　
+		&nbsp;&nbsp;&nbsp;&nbsp;
 		<a href="javascript:history.go(-1);"><input type="button" class="layui-btn" lay-submit="" lay-filter="demo1" value="返回"/></a>
-		<a href="${pageContext.request.contextPath }/exporttabledata.db?tablename=${tablename }"><input type="button" class="layui-btn" lay-submit="" lay-filter="demo1" value="导出Excel"/></a>
-	  <table class="layui-table">
-	    <!-- <colgroup>
-	      <col width="150">
-	      <col width="150">
-	      <col width="200">
-	      <col>
-	    </colgroup> -->
-	    <thead>
-	      <tr>
-	      	<c:forEach var="filed" items="${tableData.fileds }">
-		        <th>${filed}</th>
-	      	</c:forEach>
-	      </tr> 
-	    </thead>
-	    <tbody>
-	    	<c:forEach items="${tableData.data }" var="row">
-	    		<tr>
-			       <c:forEach items="${row }" var="colum">
-			       		<td>${colum }</td>
-			       </c:forEach>
-			    </tr>
-	    	</c:forEach>
-	    </tbody>
+		<a  onclick="exportexcel('${tablename}')"><input type="button" class="layui-btn" lay-submit="" lay-filter="demo1" value="导出Excel"/></a>
+	  <table id="test" class="layui-table" lay-filter="test">
+			
 	  </table>
 	</div>
+	<script src="${pageContext.request.contextPath }/static/layui/dist/layui.js" charset="utf-8"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript">
+		layui.use('table', function(){
+		  var table = layui.table;
+		  
+		  table.render({
+			elem: '#test'
+			,url:'${pageContext.request.contextPath }/gettabledata.db?tablename=${tablename}'
+			,method:'post'
+				,cols: [[
+			  		<c:forEach var="filed" items="${allfileds }" varStatus="status">
+				  		<c:choose>
+							<c:when test="${status.index eq 0}">
+								{field:'${filed}',  title: '${filed}', sort: false ,align:'center',minWidth:150}
+							</c:when>
+							<c:otherwise>
+								,{field:'${filed}',  title: '${filed}', sort: false ,align:'center',minWidth:150}
+							</c:otherwise>
+						</c:choose>
+		      		</c:forEach>
+					]]
+			,loading:true
+			,even: true
+			,page: true
+			,limit: 100
+			,limits:[100,200,300,400,500],
+			done: function(res, curr, count){
+				$('#tablecount').val(count);
+				var datainfo = $('#datainfo').html();
+				console.log(datainfo);
+				$('#datainfo').html('${tablename}表的数据('+count+'条)')
+			}
+		  });
+		});
+		
+		//导出数据
+		function exportexcel(tablename){
+			var url = '${pageContext.request.contextPath }/exporttabledata.db?tablename=${tablename }';
+			var count = $('#tablecount').val();
+			if(count >= 1000000){
+				layer.alert("数据超过100万不允许导出");
+				return;
+			}else{
+				window.location.href = url;
+			}
+		}
+	</script>
 </body>
 </html>

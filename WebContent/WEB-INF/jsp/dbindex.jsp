@@ -4,7 +4,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>数据库的java客户端</title>
+  <title>欢迎使用轻量级数据库小工具</title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -14,11 +14,11 @@
 <body class="layui-layout-body">
 	<div class="layui-layout layui-layout-admin">
 		<div class="layui-header">
-			<div class="layui-logo">数据库的 java客户端</div>
+			<div class="layui-logo">欢迎使用轻量级数据库工具</div>
 		    <!-- 头部区域（可配合layui已有的水平导航） -->
 		    <ul class="layui-nav layui-layout-left">
 		    	<li class="layui-nav-item">
-		    	　　　　　　　　　　　　　　　数据库IP：${dbconnectinfo.host }　　数据库名：${dbconnectinfo.servicename }　　数据库类型：${dbconnectinfo.dbtype }　　用户名：${dbconnectinfo.username }
+		    	　　　　　　　　　　　　连接信息：　　数据库IP：${dbconnectinfo.host }　　数据库名：${dbconnectinfo.servicename }　　数据库类型：${dbconnectinfo.dbtype }　　用户名：${dbconnectinfo.username }
 		    	</li>
 		    </ul>
 		    <ul class="layui-nav layui-layout-right">
@@ -42,9 +42,10 @@
 		        <li class="layui-nav-item layui-nav-itemed">
 		          <a class="" href="javascript:;">数据库功能</a>
 		          <dl class="layui-nav-child">
-		            <dd><a href="javascript:openMenu('gettables.db');">数据库表</a></dd>
+		            <dd><a href="javascript:openMenu('gettables.db');">表和视图</a></dd>
 		            <dd><a href="javascript:openMenu('excutequery.db');">执行查询</a></dd>
 		            <dd><a href="javascript:openMenu('excutesqlpage.db');">执行修改</a></dd>
+		            <dd><a href="javascript:openMenu('excutequeryfromsql.db');">执行文件</a></dd>
 		          </dl>
 		        </li>
 		        <!-- <li class="layui-nav-item">
@@ -67,7 +68,7 @@
 		  
 		  <div class="layui-footer">
 		    <!-- 底部固定区域 -->
-		    © 老牛公司 - 底部固定区域
+		    © 北京同方软件有限公司 - 底部固定区域
 		  </div>
 	</div>
  

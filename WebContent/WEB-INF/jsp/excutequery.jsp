@@ -14,8 +14,9 @@
 <body>
 	<div class="layui-form-item layui-form-text">
 	    <label class="layui-form-label">查询的SQL语句：</label>
+	    <br/>
 	    <div class="layui-input-block">
-	      <textarea placeholder="请输入SQL语句" class="layui-textarea" id="sql" name="desc"></textarea>
+	      <textarea placeholder="请输入SQL语句" class="layui-textarea" id="sql" name="desc" rows="10" cols="10"></textarea>
 	    </div>
 	  </div>
 	  <div class="layui-form-item">
@@ -34,7 +35,12 @@
 		    </tbody>
 	  </table> 
 	  <script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>
+	  <script type="text/javascript" src="${pageContext.request.contextPath }/static/layui/dist/layui.js" charset="utf-8"></script>
 	  <script type="text/javascript">
+	  	layui.use('layer', function(){
+		  var layer = layui.layer;
+		  
+		});
 	  	//执行sql
 	  	$('#submitbtn').click(function(){
 	  		var sql = $('#sql').val();
@@ -48,7 +54,7 @@
 				thead += '</tr>';
 				$('#thead').html(thead);
 				var tbody = '';
-				$.each(resultdata.data,function(index,obj){
+				$.each(resultdata.listdata,function(index,obj){
 					tbody +='<tr>';
 					$.each(obj,function(inx,object){
 						tbody += '<th>'+object+'</th>';
@@ -56,7 +62,7 @@
 					tbody +='</tr>';
 				});
 				$('#tbody').html(tbody);
-				$('#queryresult').html('共查出'+resultdata.data.length+'条数据，数据库连接时间：'+resultdata.connecttime+"ms，SQL执行时间："+resultdata.sqltime+"ms");
+				$('#queryresult').html('共查出'+resultdata.listdata.length+'条数据，数据库连接时间：'+resultdata.connecttime+"ms，SQL执行时间："+resultdata.sqltime+"ms");
 			});
 	  	});
 	  	
@@ -68,7 +74,7 @@
 	  			sql = sql.replace(/\n/g,' ');
 	  			window.location.href = '${pageContext.request.contextPath }/exportsqldata.db?sql='+sql;
 	  		}else{
-	  			layer.alert('sql语句不能为空');
+	  			layer.msg('sql语句不能为空');
 	  		}
 	  	});
 	  </script>
