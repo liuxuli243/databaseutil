@@ -45,7 +45,6 @@
 		            <dd><a href="javascript:openMenu('gettables.db');">表和视图</a></dd>
 		            <dd><a href="javascript:openMenu('excutequery.db');">执行查询</a></dd>
 		            <dd><a href="javascript:openMenu('excutesqlpage.db');">执行修改</a></dd>
-		            <dd><a href="javascript:openMenu('excutequeryfromsql.db');">执行文件</a></dd>
 		          </dl>
 		        </li>
 		        <!-- <li class="layui-nav-item">
