@@ -15,6 +15,8 @@ public class UrlMapping {
 
 	public static Map<String, RequestMethod> urlmap = new HashMap<String, RequestMethod>();
 	
+	private static Logger logger = LoggerFactory.getLogger(UrlMapping.class);
+	
 	public static String packagename = "com.laoniu.controller";
 	
 	static {
@@ -38,7 +40,7 @@ public class UrlMapping {
 	　 * @param path
 	 */
 	private static void initUrlMappint(File file,String path) {
-		Logger logger = LoggerFactory.getLogger(UrlMapping.class);
+		
 		File[] listFiles = file.listFiles();
 		for (File controllerfile : listFiles) {
 			if (controllerfile.isFile()) {
@@ -71,10 +73,13 @@ public class UrlMapping {
 							}else {
 								url += "/" + value;
 							}
+							String description = method.getAnnotation(LaoNiuRequestMapping.class).description();
 							RequestMethod requestMethod = new RequestMethod();
 							requestMethod.setInstance(newInstance);
 							requestMethod.setMethod(method);
-							logger.info("注册地址："+url+"，,类名："+controllerclazz.getName() + "，方法："+method.getName());
+							requestMethod.setDescription(description);
+							requestMethod.setUrl(url);
+							logger.info("注册地址："+url+"，类名："+controllerclazz.getName() + "，方法："+method.getName());
 							urlmap.put(url, requestMethod);
 							url = baseurl;
 						}

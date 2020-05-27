@@ -5,12 +5,21 @@
     <welcome-file>testdb.jsp</welcome-file>
   </welcome-file-list>
   
-  <listener>
-  	<listener-class>com.laoniu.listener.LaoNiuListener</listener-class>
-  </listener>
   <servlet>
   	<servlet-name>testdb</servlet-name>
   	<servlet-class>com.laoniu.TestDb</servlet-class>
+  	<init-param>
+  		<!-- 视图解析器前缀 -->
+  		<param-name>prefix</param-name>
+  		<param-value>/WEB-INF/jsp/</param-value>
+  	</init-param>
+  	<init-param>
+  		<!-- 视图解析器后缀 -->
+  		<param-name>suffix</param-name>
+  		<param-value>.jsp</param-value>
+  	</init-param>
+  	<!-- 项目启动的时候进行初始化 -->
+  	<load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
   	<servlet-name>testdb</servlet-name>

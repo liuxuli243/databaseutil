@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoniu.annotation.LaoNiuParam;
+import com.laoniu.annotation.LaoNiuResponseBody;
 import com.laoniu.binding.RequestMethod;
 import com.laoniu.utils.ObjectUtils;
 import com.laoniu.utils.UrlMapping;
@@ -24,6 +25,9 @@ import com.laoniu.utils.UrlMapping;
  */
 public class TestDb extends HttpServlet{
 
+	private String prefix;
+	
+	private String suffix;
 	/**
 	 * 
 	 */
@@ -40,6 +44,14 @@ public class TestDb extends HttpServlet{
 			throws ServletException, IOException {
 		//分发请求
 		dispatcher(request, response);
+	}
+	
+	@Override
+	public void init() throws ServletException {
+		UrlMapping.init();
+		this.prefix = this.getInitParameter("prefix");
+		this.suffix = this.getInitParameter("suffix");
+		super.init();
 	}
 	
 	/**
@@ -94,10 +106,15 @@ public class TestDb extends HttpServlet{
 			}
 			Object invoke = requestMethod.getMethod().invoke(requestMethod.getInstance(), params);
 			//如果返回空，将响应结果返回到页面
-			if (!requestMethod.getMethod().getReturnType().getName().equals(void.class.getName())) {
+			if (requestMethod.getMethod().isAnnotationPresent(LaoNiuResponseBody.class)) {
 				ObjectMapper objectMapper = new ObjectMapper();
 				response.setCharacterEncoding("UTF-8");
-				response.getWriter().print(objectMapper.writeValueAsString(invoke));;
+				response.getWriter().print(objectMapper.writeValueAsString(invoke));
+				return;
+			}
+			//将返回结果解析成页面
+			if (requestMethod.getMethod().getReturnType().getName().equals(String.class.getName())) {
+				request.getRequestDispatcher(this.prefix + invoke + this.suffix).forward(request, response);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

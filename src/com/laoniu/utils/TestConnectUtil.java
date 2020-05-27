@@ -62,7 +62,14 @@ public class TestConnectUtil {
 		}
 		return url;
 	}
-	
+	/**
+	 * 测试连接
+	*Title: TestConnect
+	*author:刘旭利
+	*Description: 
+	　 * @param info
+	　 * @return
+	 */
 	public static boolean TestConnect(DbInfo info){
 		String url = getConnUrl(info.getDbtype(), info.getHost(), info.getPort(), info.getServicename());
 		Connection conn = null;
@@ -162,7 +169,7 @@ public class TestConnectUtil {
 	}
 	/**
 	 * 获取驱动
-	 * @param dbtype
+	 * @param dbtype 数据库类型
 	 * @return
 	 */
 	public static String getDriverstr(String dbtype){
@@ -241,14 +248,13 @@ public class TestConnectUtil {
 	 * @param conn
 	 * @return
 	 */
-	public static List<Map> listAllTables(Connection conn,DbInfo info){
-		List<Map> result = new ArrayList<Map>();
+	public static List<Map<String, Object>> listAllTables(Connection conn,DbInfo info){
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		ResultSet rs = null;
 		try {
 			Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			DatabaseMetaData meta = conn.getMetaData();
 			rs = meta.getTables(null, info.getUsername().toUpperCase(), null, new String[]{"TABLE","VIEW"});
-			ResultSetMetaData metaData = rs.getMetaData();
 			while (rs.next()) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("table_name", rs.getString("TABLE_NAME"));
