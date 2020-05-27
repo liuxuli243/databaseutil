@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.laoniu.annotation.LaoNiuParam;
 import com.laoniu.annotation.LaoNiuRequestMapping;
+import com.laoniu.annotation.LaoNiuResponseBody;
 import com.laoniu.utils.DbInfo;
 import com.laoniu.utils.ExcelExport;
 import com.laoniu.utils.TestConnectUtil;
@@ -30,8 +31,9 @@ public class DbController {
 	 * @throws IOException 
 	 * @throws SQLException 
 	 */
-	@LaoNiuRequestMapping("/excutesql")
-	public String excutesql(HttpServletRequest request,@LaoNiuParam("sql")String sql) throws IOException {
+	@LaoNiuRequestMapping(value = "/excutesql",description = "执行sql语句（新增、删除、修改）")
+	@LaoNiuResponseBody
+	public String excutesql(HttpServletRequest request,@LaoNiuParam("sql")String sql) {
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
 		Connection connection = TestConnectUtil.getConnection(info);
 		boolean result = TestConnectUtil.excutesql(connection, sql);
@@ -51,15 +53,15 @@ public class DbController {
 	 * @throws IOException 
 	 * @throws ServletException 
 	 */
-	@LaoNiuRequestMapping("tabledata")
-	public void tabledata(HttpServletRequest request, HttpServletResponse response,@LaoNiuParam("tablename")String tablename) throws ServletException, IOException {
+	@LaoNiuRequestMapping(value = "tabledata",description = "跳转到数据库表的数据页面，并查询表的所有字段")
+	public String tabledata(HttpServletRequest request, @LaoNiuParam("tablename")String tablename) {
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
 		Connection connection = TestConnectUtil.getConnection(info);
 		List<String> listAllFiled = TestConnectUtil.listAllFiled(connection, tablename);
 		request.setAttribute("allfileds", listAllFiled);
 		TestConnectUtil.close(connection);
 		request.setAttribute("tablename", tablename);
-		request.getRequestDispatcher("/WEB-INF/jsp/tabledata.jsp").forward(request,response);
+		return "tabledata";
 	}
 	/**
 	 * 分页查询表的数据
@@ -68,8 +70,9 @@ public class DbController {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	@LaoNiuRequestMapping("gettabledata")
-	public Map<String, Object> gettabledata(HttpServletRequest request,@LaoNiuParam("tablename")String tablename,@LaoNiuParam("page")int page,@LaoNiuParam("limit")int limit) throws ServletException, IOException {
+	@LaoNiuRequestMapping(value = "gettabledata",description = "分页查询表的数据")
+	@LaoNiuResponseBody
+	public Map<String, Object> gettabledata(HttpServletRequest request,@LaoNiuParam("tablename")String tablename,@LaoNiuParam("page")int page,@LaoNiuParam("limit")int limit) {
 		
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
 		Connection connection = TestConnectUtil.getConnection(info);
@@ -89,15 +92,15 @@ public class DbController {
 	 * @throws IOException 
 	 * @throws ServletException 
 	 */
-	@LaoNiuRequestMapping("tablefileds")
-	public void tablefileds(HttpServletRequest request,HttpServletResponse response,@LaoNiuParam("tablename")String tablename) throws ServletException, IOException {
+	@LaoNiuRequestMapping(value = "tablefileds",description = "查看表结构")
+	public String tablefileds(HttpServletRequest request,@LaoNiuParam("tablename")String tablename) {
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
 		Connection connection = TestConnectUtil.getConnection(info);
 		List<Map<String, Object>> tableFileds = TestConnectUtil.tableFileds(connection, tablename);
 		TestConnectUtil.close(connection);
 		request.setAttribute("tableFileds", tableFileds);
 		request.setAttribute("tablename", tablename);
-		request.getRequestDispatcher("/WEB-INF/jsp/tablefileds.jsp").forward(request,response);
+		return "tablefileds";
 	}
 	/**
 	 * 获取查询SQL的数据
@@ -106,8 +109,9 @@ public class DbController {
 	 * @throws IOException 
 	 * @throws ServletException 
 	 */
-	@LaoNiuRequestMapping("querySql")
-	public Map<String, Object> querySql(HttpServletRequest request,HttpServletResponse response,@LaoNiuParam("sql")String sql) throws ServletException, IOException {
+	@LaoNiuRequestMapping(value = "querySql",description = "执行查询的SQL语句，并返回查询的结果")
+	@LaoNiuResponseBody
+	public Map<String, Object> querySql(HttpServletRequest request,@LaoNiuParam("sql")String sql){
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
 		long connectstart = System.currentTimeMillis();
 		Connection connection = TestConnectUtil.getConnection(info);
@@ -130,22 +134,21 @@ public class DbController {
 	 * @throws IOException 
 	 * @throws ServletException 
 	 */
-	@SuppressWarnings("rawtypes")
-	@LaoNiuRequestMapping("gettables")
-	public void gettables(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	@LaoNiuRequestMapping(value = "gettables",description = "获取数据库的所有的表")
+	public String gettables(HttpServletRequest request) {
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
 		Connection connection = TestConnectUtil.getConnection(info);
-		List<Map> alltable = TestConnectUtil.listAllTables(connection, info);
+		List<Map<String, Object>> alltable = TestConnectUtil.listAllTables(connection, info);
 		TestConnectUtil.close(connection);
 		request.setAttribute("alltable", alltable);
-		request.getRequestDispatcher("/WEB-INF/jsp/listtable.jsp").forward(request,response);
+		return "listtable";
 	}
 
 	/**
 	 * 测试连接
 	 */
-	@LaoNiuRequestMapping("testdb")
+	@LaoNiuRequestMapping(value = "testdb",description = "测试是否连接成功")
+	@LaoNiuResponseBody
 	public String testdb(DbInfo info){
 		boolean testConnect = TestConnectUtil.TestConnect(info);
 		if (testConnect) {
@@ -161,17 +164,17 @@ public class DbController {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	@LaoNiuRequestMapping("connect")
-	public void connect(DbInfo info,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	@LaoNiuRequestMapping(value = "connect",description = "连接到数据库（如果连接成功跳转到主页）")
+	public String connect(DbInfo info,HttpServletRequest request) {
 		boolean testConnect = TestConnectUtil.TestConnect(info);
 		if (testConnect) {
 			request.getSession().setAttribute("dbconnectinfo", info);
 			request.getSession().setMaxInactiveInterval(360000);
-			request.getRequestDispatcher("/WEB-INF/jsp/dbindex.jsp").forward(request,response);
+			return "dbindex";
 		}else {
 			request.setAttribute("message", "数据库连接失败");
 			request.setAttribute("info", info);
-			request.getRequestDispatcher("/testdb.jsp").forward(request,response);
+			return "testdb";
 		}
 	}
 	/**
@@ -179,40 +182,28 @@ public class DbController {
 	 * @param request
 	 * @param response
 	 */
-	@LaoNiuRequestMapping("excutequery")
-	public void excutequery(HttpServletRequest request,HttpServletResponse response) {
-		try {
-			request.getRequestDispatcher("/WEB-INF/jsp/excutequery.jsp").forward(request,response);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+	@LaoNiuRequestMapping(value = "excutequery",description = "跳转到执行sql查询的页面")
+	public String excutequery() {
+		return "excutequery";
 	}
 	/**
 	 * 跳转到执行sql的页面
 	 * @param request
 	 * @param response
 	 */
-	@LaoNiuRequestMapping("excutesqlpage")
-	public void excutesqlpage(HttpServletRequest request,HttpServletResponse response) {
-		try {
-			request.getRequestDispatcher("/WEB-INF/jsp/excutesql.jsp").forward(request,response);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+	@LaoNiuRequestMapping(value = "excutesqlpage", description = "跳转到执行sql的页面")
+	public String excutesqlpage() {
+		return "excutesql";
 	}
 	/**
 	 * 退出系统
 	 * @param request
 	 * @param response
 	 */
-	@LaoNiuRequestMapping("exit")
-	public void exit(HttpServletRequest request,HttpServletResponse response) {
-		try {
-			request.getSession().removeAttribute("dbconnectinfo");
-			request.getRequestDispatcher("testdb.jsp").forward(request,response); 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	@LaoNiuRequestMapping(value = "exit", description = "退出，返回到登录页面")
+	public String exit(HttpServletRequest request) {
+		request.getSession().removeAttribute("dbconnectinfo");
+		return "testdb"; 
 	}
 	/**
 	 * 导出excel
@@ -220,7 +211,7 @@ public class DbController {
 	 * @param response
 	 */
 	@SuppressWarnings("unchecked")
-	@LaoNiuRequestMapping("exporttabledata")
+	@LaoNiuRequestMapping(value = "exporttabledata",description = "将数据库表的数据导出到excel")
 	public void exporttabledata(HttpServletRequest request,HttpServletResponse response) {
 		String tablename = request.getParameter("tablename");
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
@@ -240,7 +231,7 @@ public class DbController {
 	 * @param response
 	 */
 	@SuppressWarnings("unchecked")
-	@LaoNiuRequestMapping("exportsqldata")
+	@LaoNiuRequestMapping(value = "exportsqldata", description = "将sql的查询结果导出excel")
 	public void exportsqldata(HttpServletRequest request,HttpServletResponse response,@LaoNiuParam("sql")String sql) {
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
 		Connection connection = TestConnectUtil.getConnection(info);
