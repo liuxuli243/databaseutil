@@ -42,10 +42,12 @@
 		        <li class="layui-nav-item layui-nav-itemed">
 		          <a class="" href="javascript:;">数据库功能</a>
 		          <dl class="layui-nav-child">
-		            <dd><a href="javascript:openMenu('gettables.db');">表和视图</a></dd>
-		            <dd><a href="javascript:openMenu('excutequery.db');">执行查询</a></dd>
-		            <dd><a href="javascript:openMenu('excutesqlpage.db');">执行修改</a></dd>
-		            <dd><a href="javascript:openMenu('interface/methodlist.db');">方法列表</a></dd>
+		            <dd><a href="javascript:openMenu('gettables.db','表和视图');">表和视图</a></dd>
+		            <dd><a href="javascript:openMenu('excutequery.db','执行查询',1);">执行查询</a></dd>
+		            <dd><a href="javascript:openMenu('excutesqlpage.db','执行修改');">执行修改</a></dd>
+		            <dd><a href="javascript:openMenu('allfunction.db','函数列表');">函数列表</a></dd>
+		            <dd><a href="javascript:openMenu('allprocedure.db','存储过程');">存储过程</a></dd>
+		            <dd><a href="javascript:openMenu('interface/methodlist.db','方法列表');">方法列表</a></dd>
 		          </dl>
 		        </li>
 		        <!-- <li class="layui-nav-item">
@@ -63,7 +65,13 @@
 		  </div>
 		  <div class="layui-body">
 		    <!-- <div style="padding: 15px;">内容主体区域</div> -->
-		    <iframe src="" frameborder="0" id="mainwindow" style="width: 100%; height: 830px;"></iframe>           
+		    <!-- <iframe src="" frameborder="0" id="mainwindow" style="width: 100%; height: 830px;"></iframe>-->
+		    <div class="layui-tab" lay-filter="content" lay-allowclose="true">
+			  <ul class="layui-tab-title">
+			  </ul>
+			  <div class="layui-tab-content">
+			  </div>
+			</div>            
 		  </div>
 		  
 		  <div class="layui-footer">
@@ -78,9 +86,48 @@
 <script src="${pageContext.request.contextPath }/static/layui/dist/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script>
-	function openMenu(url){
-		$('#mainwindow').attr('src','${pageContext.request.contextPath }/'+url);
+var element;
+layui.use('element', function(){
+  var $ = layui.jquery;
+  element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+});
+
+function openMenu(url,name,type){
+	//$('#mainwindow').attr('src','${pageContext.request.contextPath }/'+url);
+	var tabs = $(".layui-tab-title").children();
+	var layid = name;
+	if(type == 1){
+		var layid = name + new Date().getTime();
 	}
+	//判断是否存在该菜单是否已经存在tab页中
+	var msg = true;
+	 $.each(tabs, function (i, item) {
+        var tabid = $(item).attr("lay-id");
+        if (tabid === layid) {
+            msg = false;
+        }
+
+    });
+	 if(msg){
+		element.tabAdd('content', {
+	        title: name //用于演示
+	        ,content: '<iframe frameborder="0" src="${pageContext.request.contextPath }/'+url+'" style="width: 100%; height: 750px;"></iframe>'
+	        ,id: layid //实际使用一般是规定好的id，这里以时间戳模拟下
+      	});
+	 }
+	 //在当前新增的位置
+	 tabs = $(".layui-tab-title").children();
+	 $.each(tabs, function (i, item) {
+        var tabid = $(item).attr("lay-id");
+        if (tabid === layid) {
+        	$(item).addClass('layui-this');
+        	$(item).click();
+        }else{
+        	$(item).removeClass('layui-this');
+        }
+
+    });
+}
 </script>
 
 </body>

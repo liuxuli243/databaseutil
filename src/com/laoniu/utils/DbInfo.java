@@ -1,6 +1,7 @@
 package com.laoniu.utils;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
 
 public class DbInfo implements Serializable{
 
@@ -125,6 +126,100 @@ public class DbInfo implements Serializable{
 		}
 		return result;
 	}
+	/**
+	 * 查询所有函数脚本的sql语句
+	*Title: getFunctionScriptSql
+	*author:liuxuli
+	*Description: 
+	　 * @param functionname
+	　 * @return
+	 */
+	public String getFunctionScriptSql(String functionname) {
+		String result = "";
+		if ("oracle".equals(dbtype)) {
+			result = "SELECT text " + 
+					"    FROM user_source " + 
+					"   WHERE NAME = '"+functionname.toUpperCase()+"' " + 
+					"ORDER BY line";
+		}
+		if ("mysql".equals(dbtype)) {
+			result = "SHOW CREATE FUNCTION "+functionname;
+		}
+		return result;
+	}
+	/**
+	 * 获取函数的脚本
+	*Title: getScript
+	*author:liuxuli
+	*Description: 
+	　 * @param rs
+	　 * @return
+	 */
+	public String getFunctionScript(ResultSet rs) {
+		StringBuffer result = new StringBuffer("");
+		try {
+			if ("oracle".equals(dbtype)) {
+				while (rs.next()) {
+					result.append(rs.getString("TEXT"));
+				}
+			}else if ("mysql".equals(dbtype)) {
+				while (rs.next()) {
+					result.append(rs.getString("Create Function"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result.toString();
+	}
 	
+	/**
+	 * 查询存储过程脚本的sql语句
+	*Title: getFunctionScriptSql
+	*author:liuxuli
+	*Description: 
+	　 * @param functionname
+	　 * @return
+	 */
+	public String getProcedureScriptSql(String procedurename) {
+		String result = "";
+		if ("oracle".equals(dbtype)) {
+			result = "SELECT text " + 
+					"    FROM user_source " + 
+					"   WHERE NAME = '"+procedurename.toUpperCase()+"' " + 
+					"ORDER BY line";
+		}
+		if ("mysql".equals(dbtype)) {
+			result = "SHOW CREATE PROCEDURE "+procedurename;
+		}
+		return result;
+	}
+	/**
+	 * 获取存储过程的脚本
+	*Title: getProcedureScript
+	*author:liuxuli
+	*Description: 
+	　 * @param rs
+	　 * @return
+	 */
+	public String getProcedureScript(ResultSet rs) {
+		StringBuffer result = new StringBuffer("");
+		try {
+			if ("oracle".equals(dbtype)) {
+				while (rs.next()) {
+					result.append(rs.getString("TEXT"));
+				}
+			}else if ("mysql".equals(dbtype)) {
+				while (rs.next()) {
+					result.append(rs.getString("Create Procedure"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result.toString();
+	}
 	
 }
