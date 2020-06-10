@@ -73,7 +73,7 @@
 		function submitform(){
 			$.post('${pageContext.request.contextPath }/testdb.db',$('#dbinfo').serialize(),function(data){
 				console.log(data);
-				if(data == "\"1\""){
+				if(data == "1"){
 					layer.alert("连接成功");
 				}else{
 					layer.alert('连接失败');

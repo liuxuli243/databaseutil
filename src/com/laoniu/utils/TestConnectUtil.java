@@ -444,7 +444,121 @@ public class TestConnectUtil {
 		}
 		return fileds;
 	}
-	
+	/**
+	 * 获取所有的方法列表
+	*Title: allFunction
+	*author:liuxuli
+	*Description: 
+	　 * @param info
+	　 * @return
+	 */
+	public static List<Map<String, Object>> allFunction(DbInfo info) {
+		Connection conn = getConnection(info);
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		try {
+			DatabaseMetaData metaData = conn.getMetaData();
+			ResultSet functionrs = metaData.getFunctions(null, info.getUsername().toUpperCase(), null);
+			ResultSetMetaData metaData2 = functionrs.getMetaData();
+			List<String> colums = new ArrayList<String>();
+			for (int i = 1; i < metaData2.getColumnCount(); i++) {
+				colums.add( metaData2.getColumnName(i));
+			}
+			while (functionrs.next()) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				for (String string : colums) {
+					map.put(string,functionrs.getString(string));
+				}
+				result.add(map);
+			}
+			functionrs.close();
+			close(conn);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	/**
+	 * 获取函数的脚本
+	*Title: functionscript
+	*author:liuxuli
+	*Description: 
+	　 * @param info
+	　 * @param functionname
+	　 * @return
+	 */
+	public static String functionscript(DbInfo info,String functionname) {
+		String result = "";
+		Connection connection = getConnection(info);
+		try {
+			Statement createStatement = connection.createStatement();
+			ResultSet functionrs = createStatement.executeQuery(info.getFunctionScriptSql(functionname));
+			result = info.getFunctionScript(functionrs);
+			functionrs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		close(connection);
+		return result;
+	}
+	/**
+	 * 查询所有的存储过程
+	*Title: allprocedure
+	*author:liuxuli
+	*Description: 
+	　 * @param info
+	　 * @return
+	 */
+	public static List<Map<String, Object>> allprocedure(DbInfo info){
+		Connection conn = getConnection(info);
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		try {
+			DatabaseMetaData metaData = conn.getMetaData();
+			ResultSet functionrs = metaData.getProcedures(null, info.getUsername().toUpperCase(), null);
+			ResultSetMetaData metaData2 = functionrs.getMetaData();
+			List<String> colums = new ArrayList<String>();
+			for (int i = 1; i < metaData2.getColumnCount(); i++) {
+				colums.add( metaData2.getColumnName(i));
+			}
+			while (functionrs.next()) {
+				String procedure_type = functionrs.getString("PROCEDURE_TYPE");
+				if ("1".equals(procedure_type)) {
+					Map<String, Object> map = new HashMap<String, Object>();
+					for (String string : colums) {
+						map.put(string,functionrs.getString(string));
+					}
+					result.add(map);
+				}
+			}
+			functionrs.close();
+			close(conn);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	/**
+	 * 查询存储过程的脚本
+	*Title: procedurescript
+	*author:liuxuli
+	*Description: 
+	　 * @param info
+	　 * @param procedurename
+	　 * @return
+	 */
+	public static String procedurescript(DbInfo info, String procedurename) {
+		String result = "";
+		Connection connection = getConnection(info);
+		try {
+			Statement createStatement = connection.createStatement();
+			ResultSet functionrs = createStatement.executeQuery(info.getProcedureScriptSql(procedurename));
+			result = info.getProcedureScript(functionrs);
+			functionrs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		close(connection);
+		return result;
+	}
 	
 	public static void main(String[] args) {
 		Connection connection = getConnection("oracle", "10.10.129.222", "1521", "thtf", "thtf", "thtf");

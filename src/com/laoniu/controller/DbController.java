@@ -244,4 +244,38 @@ public class DbController {
 			e.printStackTrace();
 		}
 	}
+	
+	@LaoNiuRequestMapping(value = "allfunction" ,description = "跳转到查询所有函数的页面")
+	 public String allfunction(HttpServletRequest request) {
+		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
+		List<Map<String, Object>> allFunction = TestConnectUtil.allFunction(info);
+		request.setAttribute("functions", allFunction);
+		return "functionlist";
+	}
+	
+	@LaoNiuRequestMapping(value = "functionscript" ,description="获取函数的脚本")
+	public String functionscript(HttpServletRequest request,@LaoNiuParam("functionname")String functionname) {
+		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
+		String script = TestConnectUtil.functionscript(info, functionname);
+		request.setAttribute("script", script);
+		request.setAttribute("functionname", functionname);
+		return "functionscript";
+	}
+	
+	@LaoNiuRequestMapping(value = "allprocedure",description="跳转到存储过程列表页面")
+	public String allprocedure(HttpServletRequest request) {
+		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
+		List<Map<String, Object>> allprocedure = TestConnectUtil.allprocedure(info);
+		request.setAttribute("procedures", allprocedure);
+		return "procedurelist";
+	}
+	
+	@LaoNiuRequestMapping(value = "procedurescript",description = "获取存储过程的脚本")
+	public String procedurescript(HttpServletRequest request,@LaoNiuParam("procedurename")String procedurename) {
+		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
+		String script = TestConnectUtil.procedurescript(info, procedurename);
+		request.setAttribute("script", script);
+		request.setAttribute("procedurename", procedurename);
+		return "procedurescript";
+	}
 }

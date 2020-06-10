@@ -73,6 +73,7 @@ public class UrlMapping {
 							}else {
 								url += "/" + value;
 							}
+							url += ".db";
 							String description = method.getAnnotation(LaoNiuRequestMapping.class).description();
 							RequestMethod requestMethod = new RequestMethod();
 							requestMethod.setInstance(newInstance);

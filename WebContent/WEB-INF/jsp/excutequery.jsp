@@ -46,15 +46,14 @@
 	  		var sql = $('#sql').val();
 	  		$.post('${pageContext.request.contextPath }/querySql.db',{sql:sql},function(data){
 	  			//console.log(data);
-	  			var resultdata = JSON.parse(data);
 				var thead = '<tr>';
-				$.each(resultdata.fileds,function(index,obj){
+				$.each(data.fileds,function(index,obj){
 					thead += '<th>'+obj+'</th>';
 				});
 				thead += '</tr>';
 				$('#thead').html(thead);
 				var tbody = '';
-				$.each(resultdata.listdata,function(index,obj){
+				$.each(data.listdata,function(index,obj){
 					tbody +='<tr>';
 					$.each(obj,function(inx,object){
 						tbody += '<th>'+object+'</th>';
@@ -62,7 +61,7 @@
 					tbody +='</tr>';
 				});
 				$('#tbody').html(tbody);
-				$('#queryresult').html('共查出'+resultdata.listdata.length+'条数据，数据库连接时间：'+resultdata.connecttime+"ms，SQL执行时间："+resultdata.sqltime+"ms");
+				$('#queryresult').html('共查出'+data.listdata.length+'条数据，数据库连接时间：'+data.connecttime+"ms，SQL执行时间："+data.sqltime+"ms");
 			});
 	  	});
 	  	

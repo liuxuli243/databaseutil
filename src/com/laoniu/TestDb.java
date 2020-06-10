@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laoniu.annotation.LaoNiuParam;
 import com.laoniu.annotation.LaoNiuResponseBody;
@@ -61,10 +62,7 @@ public class TestDb extends HttpServlet{
 	*Description:
 	 */
 	private void dispatcher(HttpServletRequest request, HttpServletResponse response) {
-		String requestURI = request.getRequestURI();
-		String contextPath = request.getContextPath();
-		//获取url
-		String url = requestURI.substring(contextPath.length(),requestURI.length()-3);
+		String url = request.getRequestURI();
 		
 		RequestMethod requestMethod = UrlMapping.urlmap.get(url);
 		try {
@@ -107,9 +105,9 @@ public class TestDb extends HttpServlet{
 			Object invoke = requestMethod.getMethod().invoke(requestMethod.getInstance(), params);
 			//如果返回空，将响应结果返回到页面
 			if (requestMethod.getMethod().isAnnotationPresent(LaoNiuResponseBody.class)) {
-				ObjectMapper objectMapper = new ObjectMapper();
 				response.setCharacterEncoding("UTF-8");
-				response.getWriter().print(objectMapper.writeValueAsString(invoke));
+				response.setContentType("application/json");
+				response.getWriter().print(JSON.toJSONString(invoke));
 				return;
 			}
 			//将返回结果解析成页面
