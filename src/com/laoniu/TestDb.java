@@ -63,7 +63,8 @@ public class TestDb extends HttpServlet{
 	 */
 	private void dispatcher(HttpServletRequest request, HttpServletResponse response) {
 		String url = request.getRequestURI();
-		
+		String contextPath = request.getContextPath();
+		url = url.substring(contextPath.length());
 		RequestMethod requestMethod = UrlMapping.urlmap.get(url);
 		try {
 			Parameter[] parameters = requestMethod.getMethod().getParameters();
