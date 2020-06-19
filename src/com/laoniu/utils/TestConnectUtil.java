@@ -392,16 +392,30 @@ public class TestConnectUtil {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static boolean excutesql(Connection conn,String sql){
-		boolean execute = false;
+	public static Map<String, String> excutesql(Connection conn,String sql) {
+		Map<String, String> resultmap = new HashMap<String,String>();
+		String result = "";
 		try {
+			long start = System.currentTimeMillis();
 			Statement statement = conn.createStatement();
-			execute = statement.execute(sql);
-			execute = true;
+			statement.execute(sql);
+			int updateCount = statement.getUpdateCount();
+			long end = System.currentTimeMillis();
+			long exectime = (end -start);
+			result +="[SQL]："+sql+";\n";
+			result +="受影响的行："+updateCount+"\n";
+			result +="执行时间："+exectime+"ms\n\n";
 			closeStatement(statement);
+			resultmap.put("code", "200");
+			resultmap.put("message", result);
 		} catch (SQLException e) {
+			result += "[SQL]："+sql+";\n";
+			result += "执行失败，错误码："+e.getErrorCode()+"\n";
+			result += "错误消息："+e.getMessage()+"\n\n";
+			resultmap.put("code", "500");
+			resultmap.put("message", result);
 		}
-		return execute;
+		return resultmap;
 	}
 	/**
 	 * 查询所有的字段
@@ -561,9 +575,10 @@ public class TestConnectUtil {
 	}
 	
 	public static void main(String[] args) {
-		Connection connection = getConnection("oracle", "10.10.129.222", "1521", "thtf", "thtf", "thtf");
+//		Connection connection = getConnection("oracle", "10.10.129.222", "1521", "thtf", "thtf", "thtf");
+		Connection connection = getConnection("mysql", "10.10.20.190", "3306", "traffic", "root", "123456");
 		//List<String> listAllFiled = listAllFiled(connection, "SYS_DICT");
-		tableFileds(connection, "SEQURENCE4ALARMID");
+//		tableFileds(connection, "SEQURENCE4ALARMID");
 		close(connection);
 	}
 }
