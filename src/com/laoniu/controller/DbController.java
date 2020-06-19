@@ -3,6 +3,8 @@ package com.laoniu.controller;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,12 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONObject;
 import com.laoniu.annotation.LaoNiuParam;
 import com.laoniu.annotation.LaoNiuRequestMapping;
 import com.laoniu.annotation.LaoNiuResponseBody;
 import com.laoniu.utils.DbInfo;
 import com.laoniu.utils.ExcelExport;
 import com.laoniu.utils.TestConnectUtil;
+import com.laoniu.websocket.ExecutesqlWebSocket;
 
 public class DbController {
 
@@ -32,17 +36,33 @@ public class DbController {
 	 * @throws SQLException 
 	 */
 	@LaoNiuRequestMapping(value = "/excutesql",description = "执行sql语句（新增、删除、修改）")
-	@LaoNiuResponseBody
-	public String excutesql(HttpServletRequest request,@LaoNiuParam("sql")String sql) {
+	public void excutesql(HttpServletRequest request,@LaoNiuParam("sql")String sql) {
 		DbInfo info = (DbInfo) request.getSession().getAttribute("dbconnectinfo");
 		Connection connection = TestConnectUtil.getConnection(info);
-		boolean result = TestConnectUtil.excutesql(connection, sql);
-		TestConnectUtil.close(connection);
-		if (result) {
-			return "1";
-		}else {
-			return "0";
+		/**记录可执行的sql**/
+		List<String> sqllist = new ArrayList<String>();
+		String[] split = sql.split("\\$\\$");
+		for (String sqlstring : split) {
+			//此处校验sql是否为空
+			String checksql = sqlstring.replace("\n", " ").trim();
+			if (checksql != null && checksql.length() > 0) {
+				sqllist.add(sqlstring);
+			}
 		}
+		//记录执行SQL的条数，计算百分比
+		int size = sqllist.size();
+		DecimalFormat decimalFormat0 = new DecimalFormat("#");
+		for (int i = 0; i < sqllist.size(); i++) {
+			Map<String, String> result = TestConnectUtil.excutesql(connection, sqllist.get(i));
+			//计算百分比
+			result.put("percent", decimalFormat0.format((Double.valueOf(i+1)/size)*100));
+			ExecutesqlWebSocket.sendMessage(request.getSession(),JSONObject.toJSONString(result));
+			if ("500".equals(result.get("code"))) {
+				//遇到错误终止
+				break;
+			}
+		}
+		TestConnectUtil.close(connection);
 		
 	}
 
