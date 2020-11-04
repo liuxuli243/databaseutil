@@ -49,7 +49,7 @@ public class UrlMapping {
 					if (fileclassname.startsWith("/")) {
 						fileclassname = fileclassname.substring(1);
 					}
-					fileclassname = fileclassname.replace(".class", "").replace("\\", ".");
+					fileclassname = fileclassname.replace(".class", "").replace("\\", ".").replace("/", ".");
 					Class<?> controllerclazz = Class.forName(fileclassname);
 					String url = "";
 					String baseurl = "";
